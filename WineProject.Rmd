@@ -56,10 +56,6 @@ qplot(x = fixed.acidity, data = wine, binwidth = 0.1) +
   scale_x_continuous(lim = c(4, quantile(wine$fixed.acidity,.999)))
 
 summary(wine$fixed.acidity)
-
-qplot(x = fixed.acidity, data = wine, binwidth = 0.1) +
-  scale_x_continuous(lim = c(4, quantile(wine$fixed.acidity,.999))) +
-  facet_wrap(~ quality)
 ```
 
 There are a few wines with extremely high fix.acidity. After omitting the top 0.1% values, the distribution of fix.acidity appears normal, with the peak around 6.75. 
@@ -84,26 +80,18 @@ qplot(x = citric.acid, data = wine, binwidth = 0.01) +
   scale_x_continuous(lim = c(0, quantile(wine$citric.acid,.99)))
 
 summary(wine$citric.acid)
-
-qplot(x = citric.acid, data = wine, binwidth = 0.01) +
-  scale_x_continuous(lim = c(0, quantile(wine$citric.acid,.99))) +
-  facet_wrap(~ quality)
 ```
 
-There are a few wines with extremely high citric.acidity. After omitting the top 1% values, the distribution of citric.acidity appears normal, with the peak around 0.3. It is noted that there is another sharp peak at 0.49, with more than 200 counts, which are all scored as 6. 
+There are a few wines with extremely high citric.acidity. After omitting the top 1% values, the distribution of citric.acidity appears normal, with the peak around 0.3. It is noted that there is another sharp peak at 0.49, with more than 200 counts. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Histogram of residual.sugar
 qplot(x = residual.sugar, data = wine)
 
 qplot(x = residual.sugar, data = wine, binwidth = 0.03) +
-  scale_x_log10(breaks = seq(0,50,2))
+  scale_x_log10(breaks = seq(0,50,10))
 
 summary(wine$residual.sugar)
-
-qplot(x = residual.sugar, data = wine, binwidth = 0.03) +
-  scale_x_log10(breaks = seq(0,50,2)) +
-  facet_wrap(~ quality)
 ```
 
 Transformed the long tail data to better understand the distribution of residual.sugar. The tranformed residual.sugar distribution appears bimodal with the peak around 1 or so and again at 8 or so.
@@ -113,13 +101,9 @@ Transformed the long tail data to better understand the distribution of residual
 qplot(x = chlorides, data = wine)
 
 qplot(x = chlorides, data = wine, binwidth = 0.02) +
-  scale_x_log10(breaks = seq(0,0.2,0.01))
+  scale_x_log10(breaks = seq(0,0.2,0.05))
 
 summary(wine$chlorides)
-
-qplot(x = chlorides, data = wine, binwidth = 0.02) +
-  scale_x_log10(breaks = seq(0,0.2,0.01)) +
-  facet_wrap(~ quality)
 ```
 
 Transformed the long tail data to better understand the distribution of chlorides. The tranformed chlorides distribution appears normal with the peak around 0.05 or so.
@@ -132,10 +116,6 @@ qplot(x = free.sulfur.dioxide, data = wine, binwidth = 1) +
   scale_x_continuous(lim = c(0, quantile(wine$free.sulfur.dioxide,.99)))
 
 summary(wine$free.sulfur.dioxide)
-
-qplot(x = free.sulfur.dioxide, data = wine, binwidth = 1) +
-  scale_x_continuous(lim = c(0, quantile(wine$free.sulfur.dioxide,.99))) +
-  facet_wrap(~ quality)
 ```
 
 There are a few wines with extremely high free.sulfur.dioxide. After omitting the top 1% values, the distribution of free.sulfur.dioxide appears normal, with the peak around 30.
@@ -148,10 +128,6 @@ qplot(x = total.sulfur.dioxide, data = wine, binwidth = 1) +
   scale_x_continuous(lim = c(0, quantile(wine$total.sulfur.dioxide,.999)))
 
 summary(wine$total.sulfur.dioxide)
-
-qplot(x = total.sulfur.dioxide, data = wine, binwidth = 1) +
-  scale_x_continuous(lim = c(0, quantile(wine$total.sulfur.dioxide,.999))) +
-  facet_wrap(~ quality)
 ```
 
 After omitting the top 0.1% values, the distribution of total.sulfur.dioxide appears normal, with the peak around 125.
@@ -164,10 +140,6 @@ qplot(x = density, data = wine, binwidth = 0.0001) +
   scale_x_continuous(lim = c(0.985, quantile(wine$density, 0.999)))
 
 summary(wine$density)
-
-qplot(x = density, data = wine, binwidth = 0.0001) +
-  scale_x_continuous(lim = c(0.985, quantile(wine$density, 0.999))) +
-  facet_wrap(~ quality)
 ```
 
 After omitting the top 0.1% values, the distribution of density appears normal, with the peak around 0.992 to 0.995.
@@ -176,9 +148,6 @@ After omitting the top 0.1% values, the distribution of density appears normal, 
 # Histogram of pH
 qplot(x = pH, data = wine, binwidth = 0.01)
 summary(wine$pH)
-
-qplot(x = pH, data = wine, binwidth = 0.01) +
-  facet_wrap(~ quality)
 ```
 
 The distribution of pH appears normal, with the peak around 3.15.
@@ -187,9 +156,6 @@ The distribution of pH appears normal, with the peak around 3.15.
 # Histogram of sulphates
 qplot(x = sulphates, data = wine, binwidth = 0.01)
 summary(wine$sulphates)
-
-qplot(x = sulphates, data = wine, binwidth = 0.01) +
-  facet_wrap(~ quality)
 ```
 
 The distribution of sulphates appears normal, with the peak around 0.5.
@@ -198,9 +164,6 @@ The distribution of sulphates appears normal, with the peak around 0.5.
 # Histogram of alcohol
 qplot(x = alcohol, data = wine, binwidth = 0.1)
 summary(wine$alcohol)
-
-qplot(x = alcohol, data = wine, binwidth = 0.1) +
-  facet_wrap(~ quality)
 ```
 
 
@@ -258,20 +221,26 @@ The quality tends to postively correlate with alcohol, and negatively correlate 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Paired plotting
-wine_samp <- wine[sample(1:length(wine$quality), 50), ]
-ggpairs(wine_samp)
+wine_samp <- wine[sample(1:length(wine$quality), 500), ]
+ggcorr(wine_samp[, 2:13], label = TRUE, label_size = 3, nbreaks = 5)
 ```
 
 From a subset of the data, only alcohol and density seems to moderately correlate with quality. However, since other features like total.sulfur.dioxide, residual.sugar, density, alcohol tend to correlate with each other, I would like to take a closer look at scatter plots of these inter-correlated features.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Plots of alcohol and quality
-ggplot(aes(alcohol, quality), data = wine) + 
-  geom_point() 
-
 wine$f.quality <- as.ordered(wine$quality)
 ggplot(aes(f.quality, alcohol), data = wine) +
-  geom_boxplot()
+  geom_jitter(alpha = 1/10) +
+  geom_boxplot(alpha = 1/10)
+
+plot1 <- ggplot(aes(x = f.quality, y = alcohol), data = wine) +
+  geom_boxplot(alpha = 1/10) 
+
+plot2 <- qplot(x = alcohol, data = wine, binwidth = 0.1) +
+  facet_wrap(~ quality)
+  
+grid.arrange(plot1, plot2, ncol = 2)  
 ```
 
 It is hard to see the relationship between alcohol and quality from the scatter plot. Therefore, I put the quality into an ordered factor. The relationship appears to be nonlinear, with a drop at score 5. 
@@ -287,11 +256,18 @@ Despite the fact that the relationship looks nonlinear, based on the R^2 value, 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Plots of density and quality
 ggplot(aes(f.quality, density), data = wine) +
-  geom_boxplot()
+  geom_jitter(alpha = 1/10) +
+  geom_boxplot(alpha = 1/10) 
 
-ggplot(aes(f.quality, density), data = wine) +
-  geom_boxplot() +
+plot1 <- ggplot(aes(f.quality, density), data = wine) +
+  geom_boxplot(alpha = 1/10) +
   scale_y_continuous(lim = c(min(wine$density), quantile(wine$density,.999)))
+
+plot2 <- qplot(x = density, data = wine, binwidth = 0.0001) +
+  scale_x_continuous(lim = c(0.985, quantile(wine$density, 0.999))) +
+  facet_wrap(~ quality)
+
+grid.arrange(plot1, plot2, ncol = 2)   
 
 # Linear regression on density
 m2 <- lm(quality ~ density, data = wine)
@@ -302,9 +278,13 @@ The relationship appears to be nonlinear. However, based on the R^2 value, densi
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of total.sulfur.dioxide and residual.sugar
-ggplot(aes(total.sulfur.dioxide, residual.sugar), data = subset(wine, (residual.sugar <= quantile(wine$residual.sugar, 0.999) & total.sulfur.dioxide <= quantile(wine$total.sulfur.dioxide, 0.999)))) + 
-  geom_point() +
-   geom_smooth(method='lm',color='red')
+ggplot(aes(total.sulfur.dioxide, residual.sugar), 
+       data = subset(wine, (residual.sugar <= 
+                              quantile(wine$residual.sugar, 0.999) 
+                            & total.sulfur.dioxide 
+                            <= quantile(wine$total.sulfur.dioxide, 0.999)))) +
+  geom_jitter(alpha = 1/10) +
+  geom_smooth(method='lm',color='red')
 
 # Correlation
 cor.test(wine$total.sulfur.dioxide, wine$residual.sugar)
@@ -312,9 +292,13 @@ cor.test(wine$total.sulfur.dioxide, wine$residual.sugar)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of total.sulfur.dioxide and free.sulfur.dioxide
-ggplot(aes(total.sulfur.dioxide, free.sulfur.dioxide), data = subset(wine, (free.sulfur.dioxide <= quantile(wine$free.sulfur.dioxide, 0.999) & total.sulfur.dioxide <= quantile(wine$total.sulfur.dioxide, 0.999)))) + 
-  geom_point() +
-   geom_smooth(method='lm',color='red')
+ggplot(aes(total.sulfur.dioxide, free.sulfur.dioxide), 
+       data = subset(wine, (free.sulfur.dioxide 
+                            <= quantile(wine$free.sulfur.dioxide, 0.999) 
+                            & total.sulfur.dioxide 
+                            <= quantile(wine$total.sulfur.dioxide, 0.999)))) +
+  geom_jitter(alpha = 1/10) +
+  geom_smooth(method='lm',color='red')
 
 # Correlation
 cor.test(wine$total.sulfur.dioxide, wine$free.sulfur.dioxide)
@@ -322,9 +306,12 @@ cor.test(wine$total.sulfur.dioxide, wine$free.sulfur.dioxide)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of total.sulfur.dioxide and density
-ggplot(aes(total.sulfur.dioxide, density), data = subset(wine, (density <= quantile(wine$density, 0.999) & total.sulfur.dioxide <= quantile(wine$total.sulfur.dioxide, 0.999)))) + 
-  geom_point() +
-   geom_smooth(method='lm',color='red')
+ggplot(aes(total.sulfur.dioxide, density), 
+       data = subset(wine, (density <= quantile(wine$density, 0.999) 
+                            & total.sulfur.dioxide 
+                            <= quantile(wine$total.sulfur.dioxide, 0.999)))) +
+  geom_jitter(alpha = 1/10) +
+  geom_smooth(method='lm',color='red')
 
 # Correlation
 cor.test(wine$total.sulfur.dioxide, wine$density)
@@ -332,9 +319,10 @@ cor.test(wine$total.sulfur.dioxide, wine$density)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of total.sulfur.dioxide and alcohol
-ggplot(aes(total.sulfur.dioxide, alcohol), data = subset(wine, (alcohol <= quantile(wine$alcohol, 0.999) & total.sulfur.dioxide <= quantile(wine$total.sulfur.dioxide, 0.999)))) + 
-  geom_point() +
-   geom_smooth(method='lm',color='red')
+ggplot(aes(total.sulfur.dioxide, alcohol), 
+       data = subset(wine, (alcohol <= quantile(wine$alcohol, 0.999) & total.sulfur.dioxide <= quantile(wine$total.sulfur.dioxide, 0.999)))) + 
+  geom_jitter(alpha = 1/10) +
+  geom_smooth(method='lm',color='red')
 
 # Correlation
 cor.test(wine$total.sulfur.dioxide, wine$alcohol)
@@ -342,9 +330,12 @@ cor.test(wine$total.sulfur.dioxide, wine$alcohol)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of residual.sugar and density
-ggplot(aes(residual.sugar, density), data = subset(wine, (residual.sugar <= quantile(wine$residual.sugar, 0.999) & density <= quantile(wine$density, 0.999)))) + 
-  geom_point() +
-   geom_smooth(method='lm',color='red')
+ggplot(aes(residual.sugar, density), 
+       data = subset(wine, (residual.sugar 
+                            <= quantile(wine$residual.sugar, 0.999) & 
+                              density <= quantile(wine$density, 0.999)))) + 
+  geom_jitter(alpha = 1/10) +
+  geom_smooth(method='lm',color='red')
 
 # Correlation
 cor.test(wine$residual.sugar, wine$density)
@@ -352,9 +343,12 @@ cor.test(wine$residual.sugar, wine$density)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of residual.sugar and alcohol
-ggplot(aes(residual.sugar, alcohol), data = subset(wine, (residual.sugar <= quantile(wine$residual.sugar, 0.999) & alcohol <= quantile(wine$alcohol, 0.999)))) + 
-  geom_point() +
-   geom_smooth(method='lm',color='red')
+ggplot(aes(residual.sugar, alcohol), 
+       data = subset(wine, (residual.sugar 
+                            <= quantile(wine$residual.sugar, 0.999) & 
+                              alcohol <= quantile(wine$alcohol, 0.999)))) + 
+  geom_jitter(alpha = 1/10) +
+  geom_smooth(method='lm',color='red')
 
 # Correlation
 cor.test(wine$residual.sugar, wine$alcohol)
@@ -362,9 +356,11 @@ cor.test(wine$residual.sugar, wine$alcohol)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of density and alcohol
-ggplot(aes(density, alcohol), data = subset(wine, (density <= quantile(wine$density, 0.999) & alcohol <= quantile(wine$alcohol, 0.999)))) + 
-  geom_point() +
-   geom_smooth(method='lm',color='red')
+ggplot(aes(density, alcohol), 
+       data = subset(wine, (density <= quantile(wine$density, 0.999) & 
+                              alcohol <= quantile(wine$alcohol, 0.999)))) + 
+  geom_jitter(alpha = 1/10) +
+  geom_smooth(method='lm',color='red')
 
 # Correlation
 cor.test(wine$density, wine$alcohol)
@@ -372,8 +368,10 @@ cor.test(wine$density, wine$alcohol)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Scatter plot of pH and fixed.acidity
-ggplot(aes(pH, fixed.acidity), data = subset(wine, (density <= quantile(wine$pH, 0.999) & alcohol <= quantile(wine$fixed.acidity, 0.999)))) +
-  geom_point() +
+ggplot(aes(pH, fixed.acidity), 
+       data = subset(wine, (density <= quantile(wine$pH, 0.999) & 
+                              alcohol <= quantile(wine$fixed.acidity, 0.999))))+
+  geom_jitter(alpha = 1/10) +
   geom_smooth(method='lm',color='red')
 
 # Correlation
@@ -411,12 +409,16 @@ The density is strongly and negatively correlated with the alcohol (r= -0.780).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
 # Density vs alcohol and quality
-ggplot(aes(density, alcohol), data = subset(wine, (density <= quantile(wine$density, 0.999) & alcohol <= quantile(wine$alcohol, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(density, alcohol), 
+       data = subset(wine, (density <= quantile(wine$density, 0.999) & 
+                              alcohol <= quantile(wine$alcohol, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
   scale_color_brewer(type = "qual")
 
-ggplot(aes(density, alcohol), data = subset(wine, (density <= quantile(wine$density, 0.999) & alcohol <= quantile(wine$alcohol, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(density, alcohol), 
+       data = subset(wine, (density <= quantile(wine$density, 0.999) & 
+                              alcohol <= quantile(wine$alcohol, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
   scale_color_brewer(type = "qual") +
   facet_wrap(~f.quality)
 ```
@@ -425,12 +427,18 @@ Levels of quality cluster by alcohol and density values. In general, higher qual
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Density vs residual.sugar and quality
-ggplot(aes(density, residual.sugar), data = subset(wine, (density <= quantile(wine$density, 0.999) & residual.sugar <= quantile(wine$residual.sugar, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(density, residual.sugar), 
+       data = subset(wine, (density <= quantile(wine$density, 0.999) & 
+                              residual.sugar 
+                            <= quantile(wine$residual.sugar, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
   scale_color_brewer(type = "qual")
 
-ggplot(aes(density, residual.sugar), data = subset(wine, (density <= quantile(wine$density, 0.999) & residual.sugar <= quantile(wine$residual.sugar, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(density, residual.sugar), 
+       data = subset(wine, (density <= quantile(wine$density, 0.999) & 
+                              residual.sugar 
+                            <= quantile(wine$residual.sugar, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
   scale_color_brewer(type = "qual") +
   facet_wrap(~f.quality)
 ```
@@ -440,12 +448,18 @@ notice that if we account for constant density value, higher residual.sugar valu
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Alcohol vs residual.sugar and quality
-ggplot(aes(alcohol, residual.sugar), data = subset(wine, (alcohol <= quantile(wine$alcohol, 0.999) & residual.sugar <= quantile(wine$residual.sugar, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(alcohol, residual.sugar), 
+       data = subset(wine, (alcohol <= quantile(wine$alcohol, 0.999) & 
+                              residual.sugar 
+                            <= quantile(wine$residual.sugar, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
   scale_color_brewer(type = "qual")
 
-ggplot(aes(alcohol, residual.sugar), data = subset(wine, (alcohol <= quantile(wine$alcohol, 0.999) & residual.sugar <= quantile(wine$residual.sugar, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(alcohol, residual.sugar), 
+       data = subset(wine, (alcohol <= quantile(wine$alcohol, 0.999) & 
+                              residual.sugar 
+                            <= quantile(wine$residual.sugar, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
   scale_color_brewer(type = "qual") +
   facet_wrap(~f.quality)
 ```
@@ -454,8 +468,11 @@ Levels of quality cluster by alcohol and residual.sugar values. In general, high
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # pH vs fixed.acidity and quality
-ggplot(aes(pH, fixed.acidity), data = subset(wine, (pH <= quantile(wine$pH, 0.999) & fixed.acidity <= quantile(wine$fixed.acidity, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(pH, fixed.acidity), 
+       data = subset(wine, (pH <= quantile(wine$pH, 0.999) & 
+                              fixed.acidity <= 
+                              quantile(wine$fixed.acidity, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
   scale_color_brewer(type = "qual")
 ```
 
@@ -466,7 +483,8 @@ A linear model using those variables may be useful to predict the quality of a a
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Building the Linear Model
-m1 <- lm(quality ~ alcohol, data = subset(wine, alcohol <= quantile(wine$alcohol, 0.999)))
+m1 <- lm(quality ~ alcohol, 
+         data = subset(wine, alcohol <= quantile(wine$alcohol, 0.999)))
 m2 <- update(m1, ~ . + density)
 m3 <- update(m2, ~ . + residual.sugar)
 m4 <- update(m3, ~ . + volatile.acidity)
@@ -479,7 +497,8 @@ m10 <- update(m9, ~ . + citric.acid)
 m11 <- update(m9, ~ . + free.sulfur.dioxide)
 mtable(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11)
 
-m1 <- lm(quality ~ alcohol, data = subset(wine, alcohol <= quantile(wine$alcohol, 0.999)))
+m1 <- lm(quality ~ alcohol, 
+         data = subset(wine, alcohol <= quantile(wine$alcohol, 0.999)))
 m2 <- update(m1, ~ . + density)
 m3 <- update(m2, ~ . + residual.sugar)
 m4 <- update(m3, ~ . + volatile.acidity)
@@ -489,7 +508,9 @@ m7 <- update(m6, ~ . + pH)
 m8 <- update(m7, ~ . + free.sulfur.dioxide)
 mtable(m1, m2, m3, m4, m5, m6, m7, m8)
 
-summary(lm(quality ~ alcohol + density + residual.sugar + volatile.acidity + fixed.acidity + sulphates + pH + free.sulfur.dioxide, data = subset(wine, alcohol <= quantile(wine$alcohol, 0.999))))
+summary(lm(quality ~ alcohol + density + residual.sugar + volatile.acidity + 
+             fixed.acidity + sulphates + pH + free.sulfur.dioxide, 
+           data = subset(wine, alcohol <= quantile(wine$alcohol, 0.999))))
 ```
 
 The variables in this linear model can account for 28.0% of the variance in the quality of white wines.
@@ -529,7 +550,7 @@ qplot(x = density, data = wine, binwidth = 0.0001) +
 
 ### Description One
 
-After omitting the top 0.1% values, the distribution of density appears to be normal, ranging from 0.987 to 1.002, with the peak around 0.992 to 0.995.
+I chose the density from univariate analyses is because that alcohol and density are two chemical properties most correlated with the quality of white wines. After omitting the top 0.1% values, the distribution of density appears to be normal, ranging from 0.987 to 1.002, with the peak around 0.992 to 0.995.
 
 
 
@@ -539,17 +560,17 @@ After omitting the top 0.1% values, the distribution of density appears to be no
 # Plots of alcohol vs. quality
 wine$f.quality <- as.ordered(wine$quality)
 plot1 <- ggplot(aes(f.quality, alcohol), data = wine) +
-  geom_boxplot(aes(fill = f.quality), show.legend = FALSE) +
-  scale_fill_brewer(type = "qual") +
+  geom_boxplot(alpha = 0.75, aes(fill = f.quality), show.legend = FALSE) +
+  scale_fill_brewer(type = "seq") +
   xlab("Quality scores") +
   ylab("Alcohol (% by volume)") +
   ggtitle("White Wine Quality Score by Alcohol")
 
 # Plots of density vs. quality
 plot2 <- ggplot(aes(f.quality, density), data = wine) +
-  geom_boxplot(aes(fill = f.quality), show.legend = FALSE) +
+  geom_boxplot(alpha = 0.75, aes(fill = f.quality), show.legend = FALSE) +
   scale_y_continuous(lim = c(min(wine$density), quantile(wine$density,.999))) +
-  scale_fill_brewer(type = "qual") +
+  scale_fill_brewer(type = "seq") +
   xlab("Quality scores") +
   ylab("Density (g / cm^3)") +
   ggtitle("White Wine Quality Score by Density")
@@ -559,6 +580,8 @@ grid.arrange(plot1, plot2, ncol = 1)
 
 ### Description Two
 
+I chose the density and alcohol from bivariate analyses is because that they are two chemical properties most correlated with the quality of white wines.
+
 White wines with the highest quality scores have the highest alcohol level, and the lowest denstiy. The alcohol variance is larger in the wines which are scored as 6, 7 and 8. The density variance is larger in the wines which are scored as 5 and 6. The wines which are scored as 3 or 4 do not show difference in the alcohol level and density.  
 
 
@@ -567,28 +590,21 @@ White wines with the highest quality scores have the highest alcohol level, and 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
 # Density vs residual.sugar and quality
-plot1 <- ggplot(aes(density, residual.sugar), data = subset(wine, (density <= quantile(wine$density, 0.999) & residual.sugar <= quantile(wine$residual.sugar, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE) +
+ggplot(aes(density, residual.sugar), 
+                data = subset(wine, (density <= quantile(wine$density, 0.999) & residual.sugar <= quantile(wine$residual.sugar, 0.999)))) + 
+  geom_jitter(alpha = 0.75, aes(color = f.quality), na.rm =TRUE) +
+  scale_y_continuous(lim = c(0, 24)) +
   scale_color_brewer(type = "qual", name = "Quality") +
   xlab("Density (g / cm^3)") +
   ylab("Residual Sugar (g / dm^3)") +
   ggtitle("White Wine Quality by Density and Residual Sugar") +
-  theme(plot.title = element_text(size = 8, face = "bold"))
-
-
-plot2 <- ggplot(aes(density, residual.sugar), data = subset(wine, (density <= quantile(wine$density, 0.999) & residual.sugar <= quantile(wine$residual.sugar, 0.999)))) + 
-  geom_point(aes(color = f.quality), na.rm =TRUE, show.legend = FALSE) +
-  scale_color_brewer(type = "qual") +
-  facet_wrap(~f.quality) +
-  xlab("Density (g / cm^3)") +
-  ylab("Residual Sugar (g / dm^3)") +
-  ggtitle("White Wine Quality by Density and Residual Sugar") +
-  theme(plot.title = element_text(size = 8, face = "bold"))
-
-grid.arrange(plot1, plot2, ncol = 2)
+  theme(plot.title = element_text(face = "bold")) +
+  geom_smooth(method='lm',color='red')
 ```
 
 ### Description Three
+
+Beside alcochol and density, residual sugar level also plays a role in the quality of white wines. Therefore, from the multivariate analyses, I chose it as the third variable to present the plot.
 
 When holding density value constant, white wines with higher residual sugar level more likely have higher quality scores. The plot indicates that a linear model might be built to predict the quality of white wine, if including density and residual sugar levels as predictor variables. 
 
